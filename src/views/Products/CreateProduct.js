@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row, Col, Card, CardBlock, CardHeader, CardFooter } from 'reactstrap';
 import { Form, FormGroup } from 'reactstrap';
 import CustomTable from '../../components/CustomTable/CustomTable';
+import ProductForm from './ProductForm';
+
 const _ = require('lodash');
 
 class CreateProduct extends Component {
@@ -10,61 +12,31 @@ class CreateProduct extends Component {
 
     this.state = {
         actionProperty: 'Add',
-        endpoint: props.endpoint || {
+		currentProduct: {
             name: '',
-            properties: []
-        },
-		currentProperty: {
-            name: '',
-            type: 'date'
+            description: '',
+            children: [],
+            images: []
         }
 	};
 
-    this.handleCurrentPropertyInputChange = this.handleCurrentPropertyInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
 	this.handleReset = this.handleReset.bind(this);
-    this.handleEditProperty = this.handleEditProperty.bind(this);
-	this.handleDeleteProperty = this.handleDeleteProperty.bind(this);
-    this.saveProperty = this.saveProperty.bind(this);
-	this.handleEndpointNameChange = this.handleEndpointNameChange.bind(this);
-	this.resetPropertyInput = this.resetPropertyInput.bind(this);
+    this.handleEditProduct = this.handleEditProduct.bind(this);
+	this.handleDeleteProduct = this.handleDeleteProduct.bind(this);
+    this.saveProduct = this.saveProduct.bind(this);
+	this.resetProductInput = this.resetProductInput.bind(this);
   }
 
   componentWillReceiveProps(nextProps){
     this.setState(() => ({
-        endpoint: nextProps.endpoint || {
+        currentProduct: nextProps.product || {
             name: '',
-            properties: []
-        },
-        currentProperty: {
-            name: '',
-            type: 'date'
+            description: '',
+            children: [],
+            images: []
         }
     }))
-  }
-
-  handleEndpointNameChange(event) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    
-	this.setState(prevState => {
-		    let newEndpoint = prevState.endpoint;
-            newEndpoint['name'] = value;
-            return {endpoint: newEndpoint};
-		}
-	);
-  }
-
-  handleCurrentPropertyInputChange(event){
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    this.setState((prevState) => {
-		let currProp = prevState.currentProperty;
-		currProp[name] = value;
-		return { currentProperty: currProp};
-    });
   }
 
   handleSubmit(event){
@@ -77,14 +49,14 @@ class CreateProduct extends Component {
       this.props.handleReset(this.state.endpoint);
   }
 
-  handleEditProperty(id){
+  handleEditProduct(id){
     this.setState((prevState) => ({
 		actionProperty: 'Save',
         currentProperty: prevState.endpoint.properties.filter(prop => prop._id === id)[0]
     }));
   }
 
-  handleDeleteProperty(propToDelete){
+  handleDeleteProduct(propToDelete){
     this.setState((prevState) => {
 		let newEndpoint = prevState.endpoint;
 		newEndpoint.properties = newEndpoint.properties.filter(prop => prop.name !== propToDelete.columns[0]);
@@ -92,23 +64,25 @@ class CreateProduct extends Component {
     });
   }
 
-  resetPropertyInput() {
+  resetProductInput() {
 	this.setState(() => ({
 		currentProperty: {
             name: '',
-            type: 'date'
+            description: '',
+            children: [],
+            images: []
         },
 		actionProperty: 'Add'
 	}))
   }
 
-  saveProperty(){
+  saveProduct(){
 	  this.setState(prevState => {
 		  let prevStateEndpoint = prevState.endpoint;
 		  prevStateEndpoint.properties = [prevState.currentProperty, ...prevStateEndpoint.properties.filter(prop => prop.name !== prevState.currentProperty.name)];
 		  return { endpoint: prevStateEndpoint};
 	  });
-	this.resetPropertyInput();
+	this.resetProductInput();
   }
 
   render() {
@@ -121,23 +95,13 @@ class CreateProduct extends Component {
                 </CardHeader>
                 <CardBlock>
                     <Form  className="form-horizontal">
-                        <Row>
-                            <Col md="1" />
-                            <Col md="10">
-                                <FormGroup>
-                                    <label className="form-control-label" htmlFor="endpointName">Name</label>
-                                    <input type="text" id="endpointName" name="endpointName" className="form-control" placeholder="Name for the endpoint" value={this.state.endpoint.name} onChange={this.handleEndpointNameChange}/>
-                                    <span className="help-block">Please enter a unique endpoint name</span>
-                                </FormGroup>
-                            </Col>
-                            <Col md="1" />
-                        </Row>
+                        <ProductForm />
                         <Row>
                             <Col md="1" />
                             <Col md="10">
                                 <Card>
                                     <CardHeader>
-                                        <i className="fa fa-align-justify"></i> Properties
+                                        <i className="fa fa-align-justify"></i> Children
                                     </CardHeader>
                                     <CardBlock>
                                         <Row>
@@ -165,16 +129,16 @@ class CreateProduct extends Component {
                                         </Row>
                                         <Row>
                                             <Col md="12" style={{textAlign: 'center'}}>
-                                                <Button onClick={this.saveProperty} color="primary"><i className="fa fa-star"></i>&nbsp; {this.state.actionProperty}</Button>
+                                                <Button onClick={this.saveProduct} color="primary"><i className="fa fa-star"></i>&nbsp; {this.state.actionProperty}</Button>
 												&nbsp;
-												<Button onClick={this.resetPropertyInput} color="danger"><i className="fa fa-ban"></i>&nbsp; Reset</Button>
+												<Button onClick={this.resetProductInput} color="danger"><i className="fa fa-ban"></i>&nbsp; Reset</Button>
                                             </Col>
                                         </Row>
                                         <br/>
                                         <CustomTable 
                                             headerColumns={['Name', 'Type']}
-                                            onClickEdit={this.handleEditProperty}
-											onClickDelete={this.handleDeleteProperty}
+                                            onClickEdit={this.handleEditProduct}
+											onClickDelete={this.handleDeleteProduct}
                                             rows={this.state.endpoint.properties.map(prop => ({_id: prop._id, columns: [prop.name, prop.type]}))} />
                                     </CardBlock>
                                     <CardFooter>

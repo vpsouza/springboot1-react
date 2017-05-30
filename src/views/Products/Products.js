@@ -6,8 +6,8 @@ import {
 } from 'reactstrap';
 import CreateProduct from './CreateProduct';
 import Api from '../../api';
-import EndpointList from '../../components/EndpointList/EndpointList';
-import AlertNotification from '../../components/AlertNotification/AlertNotification';
+import ProductList from '../../components/ProductList';
+import AlertNotification from '../../components/AlertNotification';
 
 class Products extends Component {
 	constructor(props) {
@@ -50,13 +50,13 @@ class Products extends Component {
 		Api
 			.getProducts()
 			.then(res => {
-				let rows = res.map(endpoint => ({
-					_id: endpoint._id,
-					name: endpoint.name,
-					properties: endpoint.properties,
-					columns: [
-						endpoint.name, <a target="balnk" href={Api.getBaseEndpointURL() + '/api/' + endpoint.name}>{'/' + endpoint.name}</a>
-					]
+				let rows = res.map(product => ({
+					id: product.id,
+					name: product.name,
+					description: product.description,
+					children: product.children,
+					images: product.images,
+					columns: [product.name, product.description]
 				}));
 				this.setState(() => ({products: rows}))
 			})
@@ -115,17 +115,17 @@ class Products extends Component {
 		return (
 			<div className="animated fadeIn">
 				{this.state.hasError && (<Row><Col md="12"><AlertNotification isVisible={this.state.hasError} mainText={this.state.errorMessage} color="danger" handleClosed={!this.state.fatalError ? this.handleAlertNotificationClosed : null} /></Col></Row>)}
-				<EndpointList 
+				<ProductList 
 					handleEditEndpoint={this.handleEditEndpoint}
 					handleDeleteEndpoint={this.handleDeleteEndpoint}
 					hasError={this.state.hasError}
 					products={this.state.products}>
 					<Button type="button" onClick={this.handleCreateNewEndpoint} color="primary">
 						<i className="fa fa-star"></i>&nbsp; {!this.state.showCreateProduct
-							? 'Create a new endpoint'
-							: 'Cancel the creation of a new endpoint'}
+							? 'Create a new product'
+							: 'Cancel the creation of a new product'}
 					</Button>
-				</EndpointList>
+				</ProductList>
 				{!this.state.hasError && this.state.showCreateProduct && 
 					<CreateProduct
 						action={this.state.createEndpointAction}
