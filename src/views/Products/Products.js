@@ -4,10 +4,11 @@ import {
 		Row,
 		Col
 } from 'reactstrap';
-import CreateProduct from './CreateProduct';
 import Api from '../../api';
+import CreateProduct from '../../components/CreateProduct';
 import ProductList from '../../components/ProductList';
 import AlertNotification from '../../components/AlertNotification';
+import PropTypes from 'prop-types';
 
 class Products extends Component {
 	constructor(props) {
@@ -54,8 +55,6 @@ class Products extends Component {
 					id: product.id,
 					name: product.name,
 					description: product.description,
-					children: product.children,
-					images: product.images,
 					columns: [product.name, product.description]
 				}));
 				this.setState(() => ({products: rows}))

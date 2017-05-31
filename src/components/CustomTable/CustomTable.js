@@ -41,7 +41,7 @@ const CustomTable = ({headerColumns, onClickEdit, onClickDelete, rows}) => (
                     <td>{onClickEdit && <button
                             type="button"
                             className="btn btn-primary"
-                            onClick={onClickEdit.bind(null, row._id)}>
+                            onClick={onClickEdit.bind(null, row.id)}>
                             <i className="fa fa-edit"></i>
                         </button>}</td>
                     <td>{onClickDelete && <button

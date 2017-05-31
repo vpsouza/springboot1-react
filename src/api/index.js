@@ -1,23 +1,43 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:8080';
-//const baseURL = 'https://xy-inc-node.herokuapp.com';
+//const baseURL = 'http://localhost:8080';
+const baseURL = 'https://vpsouza-springboot1.herokuapp.com';
 
 export default class Api {
 	static getBaseProductURL() {
 		return baseURL;
 	}
+
 	static getProducts(){
-		return Promise.resolve([{"id":1,"name":"Product 1","description":"A Product 1","children":[{"id":5,"name":"Child Product 4","description":"A Child Product 4 of Parent Product 1","children":[],"images":[]},{"id":3,"name":"Child Product 2","description":"A Child Product 2 of Parent Product 1","children":[],"images":[]},{"id":7,"name":"Child Product 6","description":"A Child Product 6 of Parent Product 1","children":[],"images":[]},{"id":4,"name":"Child Product 3","description":"A Child Product 3 of Parent Product 1","children":[],"images":[]},{"id":6,"name":"Child Product 5","description":"A Child Product 5 of Parent Product 1","children":[],"images":[]},{"id":2,"name":"Child Product 1","description":"A Child Product 1 of Parent Product 1","children":[],"images":[]}],"images":[{"id":1,"type":"IMG3"},{"id":2,"type":"IMG2"},{"id":3,"type":"IMG1"}]},{"id":8,"name":"Product 2","description":"A Product 2","children":[{"id":10,"name":"Child Product 2","description":"A Child Product 2 of Parent Product 2","children":[],"images":[]},{"id":12,"name":"Child Product 4","description":"A Child Product 4 of Parent Product 2","children":[],"images":[]},{"id":11,"name":"Child Product 3","description":"A Child Product 3 of Parent Product 2","children":[],"images":[]},{"id":14,"name":"Child Product 6","description":"A Child Product 6 of Parent Product 2","children":[],"images":[]},{"id":9,"name":"Child Product 1","description":"A Child Product 1 of Parent Product 2","children":[],"images":[]},{"id":13,"name":"Child Product 5","description":"A Child Product 5 of Parent Product 2","children":[],"images":[]}],"images":[{"id":4,"type":"IMG1"},{"id":6,"type":"IMG3"},{"id":5,"type":"IMG2"}]},{"id":22,"name":"Product 4","description":"A Product 4","children":[{"id":24,"name":"Child Product 2","description":"A Child Product 2 of Parent Product 4","children":[],"images":[]},{"id":25,"name":"Child Product 3","description":"A Child Product 3 of Parent Product 4","children":[],"images":[]},{"id":23,"name":"Child Product 1","description":"A Child Product 1 of Parent Product 4","children":[],"images":[]},{"id":27,"name":"Child Product 5","description":"A Child Product 5 of Parent Product 4","children":[],"images":[]},{"id":28,"name":"Child Product 6","description":"A Child Product 6 of Parent Product 4","children":[],"images":[]},{"id":26,"name":"Child Product 4","description":"A Child Product 4 of Parent Product 4","children":[],"images":[]}],"images":[{"id":10,"type":"IMG3"},{"id":11,"type":"IMG1"},{"id":12,"type":"IMG2"}]},{"id":29,"name":"Product 5","description":"A Product 5","children":[{"id":31,"name":"Child Product 2","description":"A Child Product 2 of Parent Product 5","children":[],"images":[]},{"id":34,"name":"Child Product 5","description":"A Child Product 5 of Parent Product 5","children":[],"images":[]},{"id":30,"name":"Child Product 1","description":"A Child Product 1 of Parent Product 5","children":[],"images":[]},{"id":35,"name":"Child Product 6","description":"A Child Product 6 of Parent Product 5","children":[],"images":[]},{"id":33,"name":"Child Product 4","description":"A Child Product 4 of Parent Product 5","children":[],"images":[]},{"id":32,"name":"Child Product 3","description":"A Child Product 3 of Parent Product 5","children":[],"images":[]}],"images":[{"id":15,"type":"IMG1"},{"id":14,"type":"IMG3"},{"id":13,"type":"IMG2"}]},{"id":36,"name":"Product 6","description":"A Product 6","children":[{"id":38,"name":"Child Product 2","description":"A Child Product 2 of Parent Product 6","children":[],"images":[]},{"id":37,"name":"Child Product 1","description":"A Child Product 1 of Parent Product 6","children":[],"images":[]},{"id":42,"name":"Child Product 6","description":"A Child Product 6 of Parent Product 6","children":[],"images":[]},{"id":39,"name":"Child Product 3","description":"A Child Product 3 of Parent Product 6","children":[],"images":[]},{"id":41,"name":"Child Product 5","description":"A Child Product 5 of Parent Product 6","children":[],"images":[]},{"id":40,"name":"Child Product 4","description":"A Child Product 4 of Parent Product 6","children":[],"images":[]}],"images":[{"id":17,"type":"IMG2"},{"id":16,"type":"IMG1"},{"id":18,"type":"IMG3"}]},{"id":15,"name":"Product 3","description":"A Product 3","children":[{"id":19,"name":"Child Product 4","description":"A Child Product 4 of Parent Product 3","children":[],"images":[]},{"id":20,"name":"Child Product 5","description":"A Child Product 5 of Parent Product 3","children":[],"images":[]},{"id":16,"name":"Child Product 1","description":"A Child Product 1 of Parent Product 3","children":[],"images":[]},{"id":21,"name":"Child Product 6","description":"A Child Product 6 of Parent Product 3","children":[],"images":[]},{"id":17,"name":"Child Product 2","description":"A Child Product 2 of Parent Product 3","children":[],"images":[]},{"id":18,"name":"Child Product 3","description":"A Child Product 3 of Parent Product 3","children":[],"images":[]}],"images":[{"id":7,"type":"IMG2"},{"id":9,"type":"IMG3"},{"id":8,"type":"IMG1"}]}]);
-		//return axios.get(baseURL + '/products').then((response) => Promise.resolve(response.data));
+		return axios.get(baseURL + '/products').then((response) => Promise.resolve(response.data));
 	}
 
-	static saveProduct(endpoint){
-		return axios.post(baseURL + '/products', endpoint).then((response) => Promise.resolve(response.data));
+	static getAllProducts(){
+		return axios.get(baseURL + '/products/all').then((response) => Promise.resolve(response.data));
 	}
 
-	static updateProduct(endpoint){
-		return axios.put(baseURL + '/products/' + endpoint._id.toString(), endpoint).then((response) => Promise.resolve(response.data));
+	static getProductById(id){
+		return axios.get(baseURL + '/products/' + id).then((response) => Promise.resolve(response.data));
+	}
+
+	static getProductByIdAll(id){
+		return axios.get(baseURL + '/products/' + id + '/all').then((response) => Promise.resolve(response.data));
+	}
+
+	static getProductImagesById(id){
+		return axios.get(baseURL + '/products/' + id + '/images').then((response) => Promise.resolve(response.data));
+	}
+
+	static getProductChildrenById(id){
+		return axios.get(baseURL + '/products/' + id + '/children').then((response) => Promise.resolve(response.data));
+	}
+
+	static saveProduct(product){
+		return axios.post(baseURL + '/products', product).then((response) => Promise.resolve(response.data));
+	}
+
+	static updateProduct(product){
+		return axios.patch(baseURL + '/products', product).then((response) => Promise.resolve(response.data));
 	}
 
 	static deleteProduct(id) {

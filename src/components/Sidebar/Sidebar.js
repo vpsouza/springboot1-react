@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
+import PropTypes from 'prop-types';
 
 class Sidebar extends Component {
 
@@ -25,11 +26,14 @@ class Sidebar extends Component {
             <li className="nav-title">
               Menu
             </li>
-			      <li className="nav-item">
-              <Link to={'/products'} className="nav-link" activeClassName="active"><i className="icon-puzzle"></i> Products</Link>
+			<li className="nav-item">
+              <Link to={'/products'} className="nav-link" activeClassName="active"><i className="icon-puzzle"></i>Products</Link>
             </li>
-            <li className="nav-item">
-              <Link to={'/run'} className="nav-link" activeClassName="active"><i className="icon-puzzle"></i> Run Endpoint</Link>
+			<li className="nav-item">
+              <Link to={'/products/all'} className="nav-link" activeClassName="active"><i className="icon-puzzle"></i>Products All</Link>
+            </li>
+			<li className="nav-item">
+              <Link to={'/products/children'} className="nav-link" activeClassName="active"><i className="icon-puzzle"></i>Children By Id </Link>
             </li>
           </ul>
         </nav>

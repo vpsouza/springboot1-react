@@ -15,22 +15,23 @@ import {
 
 import CustomTable from '../CustomTable/CustomTable';
 import Loading from '../Loading/Loading';
+import PropTypes from 'prop-types';
 
-const ProductList = ({products, hasError, handleEditEndpoint, handleDeleteEndpoint, children}) => (
+const ProductList = ({products, tableColumns, hasError, handleEditProduct, handleDeleteProduct, children}) => (
     <Row>
         <Col lg="12">
             <Card>
                 <CardHeader>
                     <i className="fa fa-align-justify"></i>
-                    Availble Endpoints
+                    Availble Products
                 </CardHeader>
                 <CardBlock>
                     {products.length > 0 ? 
                         <div>
                             <CustomTable
-                                headerColumns={['Name', 'Path']}
-                                onClickEdit={handleEditEndpoint}
-                                onClickDelete={handleDeleteEndpoint}
+                                headerColumns={tableColumns}
+                                onClickEdit={handleEditProduct}
+                                onClickDelete={handleDeleteProduct}
                                 rows={products}/>
                             <Row>
                                 <Col
@@ -49,6 +50,20 @@ const ProductList = ({products, hasError, handleEditEndpoint, handleDeleteEndpoi
             </Card>
         </Col>
     </Row>
-)
+);
+
+ProductList.propTypes = {
+	products: PropTypes.array.isRequired, 
+	hasError: PropTypes.bool.isRequired, 
+	handleEditProduct: PropTypes.func, 
+	handleDeleteProduct: PropTypes.func,
+	tableColumns: PropTypes.array.isRequired
+};
+
+ProductList.defaultProps = {
+	products: [], 
+	hasError: false,
+	tableColumns: ['Name', 'Description']
+};
 
 export default ProductList;
