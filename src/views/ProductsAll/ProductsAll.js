@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {
 		Button,
 		Row,
-		Col
+		Col,
+		Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import Api from '../../api';
 import CreateProduct from '../../components/CreateProduct';
@@ -16,7 +17,7 @@ class ProductsAll extends Component {
 		super(props);
 
 		this.state = {
-			hasError: false,
+			hasNotification: false,
 			fatalError: false,
 			errorMessage: '',
 			showCreateProduct: false,
@@ -27,10 +28,12 @@ class ProductsAll extends Component {
 					children: [],
 					images: []
 			},
-			createProductAction: 'Create'
+			createProductAction: 'Create',
+			modalConfirmDelete: false,
+			modalConfirmDeleteMessage: ''
 		};
-		this.handleEditParentProductDetailsById = this
-			.handleEditParentProductDetailsById
+		this.handleSelectProductDetailsById = this
+			.handleSelectProductDetailsById
 			.bind(this);
 		this.handleDeleteParentProductById = this
 			.handleDeleteParentProductById
@@ -41,11 +44,17 @@ class ProductsAll extends Component {
 		this.handleAlertNotificationClosed = this
 			.handleAlertNotificationClosed
 			.bind(this);
-		this.handleCreateNewProduct = this
-			.handleCreateNewProduct
+		this.handleBtnCreateNewProduct = this
+			.handleBtnCreateNewProduct
 			.bind(this);
 		this.handleEditChildProduct = this
 			.handleEditChildProduct
+			.bind(this);
+		this.toggleConfirmDelete = this
+			.toggleConfirmDelete
+			.bind(this);
+		this.doDeleteProduct = this
+			.doDeleteProduct
 			.bind(this);
 	}
 
@@ -55,7 +64,7 @@ class ProductsAll extends Component {
 
 	getAllProducts() {
 		Api
-			.getAllProducts()
+			.getProducts()
 			.then(res => {
 				let rows = res
 					.sort((a,b) => {
@@ -97,22 +106,24 @@ class ProductsAll extends Component {
 				this.setState(() => ({products: rows}));
 			})
 			.catch(res => {
-				this.setState((prevState) => ({hasError: !prevState.hasError, errorMessage: res.response ? res.response.data.message : res.message, fatalError: !res.response ? true : false}));
+				this.setState((prevState) => ({hasNotification: !prevState.hasNotification, errorMessage: res.response ? res.response.data.message : res.message, fatalError: !res.response ? true : false}));
 			}); 
 	}
 
 	handleCreateProductSubmit(product) {
-		let service = product._id ? Api.updateEndpoint : Api.saveEndpoint;
-		service(product).then(newEndpoint => {
+		let service = product.id ? Api.updateProduct : Api.saveProduct;
+		service(product).then(newProduct => {
 			this.getAllProducts();
+			this.handleBtnCreateNewProduct();
+			this.setState((prevState) => ({hasNotification: !prevState.hasNotification, errorMessage: 'Product ' + product.name + ' saved!', notificationColor: 'success'}));
 		})
 		.catch(res => {
-			this.setState((prevState) => ({hasError: true, errorMessage: res.response ? res.response.data.message : res.message}));
+			this.setState((prevState) => ({hasNotification: true, errorMessage: res.response ? res.response.data.message : res.message, notificationColor: 'danger'}));
 		}); 
 	}
 
-	handleEditParentProductDetailsById(id) {
-		Api.getProductByIdAll(id)
+	handleSelectProductDetailsById(id) {
+		Api.getProductById(id)
 			.then(res => {
 				this.setState((prevState) => ({
 					showCreateProduct: true,
@@ -123,19 +134,33 @@ class ProductsAll extends Component {
 	}
 
 	handleDeleteParentProductById(product) {
-		Api.deleteEndpoint(product._id.toString()).then(res => {
-			this.setState((prevState) => ({
-				showCreateProduct: false,
-				createProductAction: 'Create',
-				currentProduct: null
-			}));
-			this.getAllProducts();
-		}).catch(res => {
-			this.setState((prevState) => ({hasError: !prevState.hasError, errorMessage: res.response ? res.response.data.message : res.message}));
-		}); 
+		this.setState(() => ({
+			showCreateProduct: false,
+			createProductAction: 'Create',
+			currentProduct: product,
+			modalConfirmDelete: !this.state.modalConfirmDelete,
+			modalConfirmDeleteMessage: 'Confirm deletion of the product ' + product.name + '?' + (product.children.length > 0 ? ' Note that this product children will be deleted too.' : '')
+		}));
 	}
 
-	handleCreateNewProduct() {
+	doDeleteProduct(){
+		Api.deleteProduct(this.state.currentProduct.id).then(res => {
+			this.getProducts();
+			this.setState((prevState) => ({showCreateProduct: false,
+			createProductAction: 'Create', currentProduct: {
+				name: '',
+				properties: [],
+				children: [],
+				images: []
+			}, hasNotification: !prevState.hasNotification, errorMessage: 'Product ' + this.state.currentProduct.name + ' deleted!', notificationColor: 'success'}));
+			this.toggleConfirmDelete();
+		}).catch(res => {
+			this.setState((prevState) => ({hasNotification: !prevState.hasNotification, errorMessage: res.response ? res.response.data.message : res.message, notificationColor: 'danger'}));
+			this.toggleConfirmDelete();
+		});
+	}
+
+	handleBtnCreateNewProduct() {
 		this.setState((prevState) => ({
 			showCreateProduct: !prevState.showCreateProduct,
 			createProductAction: 'Create',
@@ -149,36 +174,57 @@ class ProductsAll extends Component {
 	}
 
 	handleAlertNotificationClosed() {
-		this.setState((prevState) => ({hasError: !prevState.hasError, errorMessage: ''}));
+		this.setState(() => ({hasNotification: false, errorMessage: '', notificationColor: ''}));
 	}
 
 	handleEditChildProduct(id){
 		this.props.router.push('/product/' + id);
 	}
 
+	toggleConfirmDelete() {
+		this.setState({
+			modalConfirmDelete: !this.state.modalConfirmDelete,
+			currentProduct: {
+					name: '',
+					properties: [],
+					children: [],
+					images: []
+			}
+		});
+	}
+
 	render() {
 		return (
 			<div className="animated fadeIn">
-				{this.state.hasError && (<Row><Col md="12"><AlertNotification isVisible={this.state.hasError} mainText={this.state.errorMessage} color="danger" handleClosed={!this.state.fatalError ? this.handleAlertNotificationClosed : null} /></Col></Row>)}
+				{this.state.hasNotification && (<Row><Col md="12"><AlertNotification isVisible={this.state.hasNotification} mainText={this.state.errorMessage} color={this.state.notificationColor} handleClosed={!this.state.fatalError ? this.handleAlertNotificationClosed : null} /></Col></Row>)}
+				<Modal isOpen={this.state.modalConfirmDelete} toggle={this.toggleConfirmDelete} className={this.props.className}>
+				<ModalHeader toggle={this.toggleConfirmDelete}>Confirm delete operation</ModalHeader>
+				<ModalBody>{this.state.modalConfirmDeleteMessage}</ModalBody>
+				<ModalFooter>
+					<Button color="primary" onClick={this.doDeleteProduct}>Delete</Button>{' '}
+					<Button color="secondary" onClick={this.toggleConfirmDelete}>Cancel</Button>
+				</ModalFooter>
+				</Modal>
 				<ProductList 
-					handleEditProduct={this.handleEditParentProductDetailsById}
+					handleEditProduct={this.handleSelectProductDetailsById}
 					handleDeleteProduct={this.handleDeleteParentProductById}
-					hasError={this.state.hasError}
+					hasNotification={this.state.hasNotification}
 					products={this.state.products}>
-					<Button type="button" onClick={this.handleCreateNewProduct} color="primary">
+					<Button type="button" onClick={this.handleBtnCreateNewProduct} color="primary">
 						<i className="fa fa-star"></i>&nbsp; {!this.state.showCreateProduct
 							? 'Create a new product'
 							: 'Cancel the creation of a new product'}
 					</Button>
 				</ProductList>
-				{!this.state.hasError && this.state.showCreateProduct && 
+				{!this.state.hasNotification && this.state.showCreateProduct && 
 					<CreateProduct
 						showParentProduct={true}
 						allProducts={this.state.products}
 						action={this.state.createProductAction}
 						product={this.state.currentProduct}
 						handleEditChildProduct={this.handleEditChildProduct}
-						handleSubmit={this.handleCreateProductSubmit}/>}
+						handleSubmit={this.handleCreateProductSubmit}
+						handleReset={this.handleBtnCreateNewProduct}/>}
 			</div>
 		)
 	}

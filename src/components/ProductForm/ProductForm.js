@@ -12,6 +12,7 @@ class ProductForm extends Component {
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
+		this.hadleChangeParent = this.hadleChangeParent.bind(this);
     }
 
 	componentWillReceiveProps(nextProps){
@@ -30,8 +31,26 @@ class ProductForm extends Component {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
 
-        this.setState((prevState) => ({currentProduct: { [name]: value } }));
+        this.setState((prevState) => {
+			let oldCurrProduct = prevState.currentProduct;
+			oldCurrProduct[name] = value;
+			return {currentProduct: oldCurrProduct};
+		});
+		this.notifyChange();
     }
+
+	hadleChangeParent(event){
+		const target = event.target;
+        const value = target.value;
+        this.setState((prevState) => {
+			let oldCurrProduct = prevState.currentProduct;
+			oldCurrProduct['parent'] = Object.assign({}, this.props.allProducts.filter(p => p.id == value)[0]);
+			//oldCurrProduct['parent'].children.splice(0);
+			//oldCurrProduct['parent'].images.splice(0);
+			return {currentProduct: oldCurrProduct};
+		});
+		this.notifyChange();
+	}
 
     notifyChange(){
         this.props.notifyChange(this.state.currentProduct);
@@ -52,9 +71,9 @@ class ProductForm extends Component {
 				</FormGroup>
 				{this.props.showParent && <FormGroup>
 					<label className="form-control-label" htmlFor="productParent">Parent</label>
-					<select className="form-control" id="productParent" name="parent" onChange={this.handleInputChange} value={this.state.currentProduct.parent ? this.state.currentProduct.parent.id : ''}>
-						<option value=''>Select</option>
-						{this.props.allProducts.map(prod => (<option key={prod.id} value={prod.id}>{prod.name}</option>))}
+					<select className="form-control" id="productParent" name="parent" onChange={this.hadleChangeParent} value={this.state.currentProduct.parent ? this.state.currentProduct.parent.id : ''}>
+						<option>Select</option>
+						{this.props.allProducts.filter(elm => elm.id != this.state.currentProduct.id || !this.state.currentProduct.id ).map(prod => (<option key={prod.id} value={prod.id}>{prod.name}</option>))}
 					</select>
 				</FormGroup>}
             </Form>

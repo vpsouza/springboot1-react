@@ -32,9 +32,6 @@ class Sidebar extends Component {
 			<li className="nav-item">
               <Link to={'/products/all'} className="nav-link" activeClassName="active"><i className="icon-puzzle"></i>Products All</Link>
             </li>
-			<li className="nav-item">
-              <Link to={'/products/children'} className="nav-link" activeClassName="active"><i className="icon-puzzle"></i>Children By Id </Link>
-            </li>
           </ul>
         </nav>
       </div>

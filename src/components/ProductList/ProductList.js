@@ -17,7 +17,7 @@ import CustomTable from '../CustomTable/CustomTable';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 
-const ProductList = ({products, tableColumns, hasError, handleEditProduct, handleDeleteProduct, children}) => (
+const ProductList = ({products, tableColumns, hasNotification, handleEditProduct, handleDeleteProduct, children}) => (
     <Row>
         <Col lg="12">
             <Card>
@@ -43,7 +43,7 @@ const ProductList = ({products, tableColumns, hasError, handleEditProduct, handl
                                 </Col>
                             </Row>
                         </div>
-                        : !hasError && 
+                        : !hasNotification && 
                         <Loading />
                     }
                 </CardBlock>
@@ -54,7 +54,7 @@ const ProductList = ({products, tableColumns, hasError, handleEditProduct, handl
 
 ProductList.propTypes = {
 	products: PropTypes.array.isRequired, 
-	hasError: PropTypes.bool.isRequired, 
+	hasNotification: PropTypes.bool.isRequired, 
 	handleEditProduct: PropTypes.func, 
 	handleDeleteProduct: PropTypes.func,
 	tableColumns: PropTypes.array.isRequired
@@ -62,7 +62,7 @@ ProductList.propTypes = {
 
 ProductList.defaultProps = {
 	products: [], 
-	hasError: false,
+	hasNotification: false,
 	tableColumns: ['Name', 'Description']
 };
 

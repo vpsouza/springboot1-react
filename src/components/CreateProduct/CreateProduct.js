@@ -20,8 +20,6 @@ class CreateProduct extends Component {
 	this.handleProductFormChange = this.handleProductFormChange.bind(this);
 	this.handleReset = this.handleReset.bind(this);
     this.handleEditChildProduct = this.handleEditChildProduct.bind(this);
-    this.saveProduct = this.saveProduct.bind(this);
-	this.resetProductInput = this.resetProductInput.bind(this);
   }
 
   componentWillReceiveProps(nextProps){
@@ -37,7 +35,7 @@ class CreateProduct extends Component {
   }
 
   handleProductFormChange(currentProduct){
-		this.setState(() => ({ 'currentProduct': currentProduct }));
+		this.setState(() => ({ currentProduct: currentProduct }));
   }
 
   handleSubmit(event){
@@ -52,27 +50,6 @@ class CreateProduct extends Component {
 
   handleEditChildProduct(id){
     this.props.handleEditChildProduct(id);
-  }
-
-  resetProductInput() {
-	this.setState(() => ({
-		currentProduct: {
-            name: '',
-            description: '',
-            children: [],
-            images: []
-        },
-		actionProperty: 'Add'
-	}))
-  }
-
-  saveProduct(){
-	  this.setState(prevState => {
-		  let prevStateEndpoint = prevState.endpoint;
-		  prevStateEndpoint.properties = [prevState.currentProperty, ...prevStateEndpoint.properties.filter(prop => prop.name !== prevState.currentProperty.name)];
-		  return { endpoint: prevStateEndpoint};
-	  });
-	this.resetProductInput();
   }
 
   render() {

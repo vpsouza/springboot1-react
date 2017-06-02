@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-//const baseURL = 'http://localhost:8080';
-const baseURL = 'https://vpsouza-springboot1.herokuapp.com';
+const baseURL = 'http://localhost:8080';
+//const baseURL = 'https://vpsouza-springboot1.herokuapp.com';
 
 export default class Api {
 	static getBaseProductURL() {
