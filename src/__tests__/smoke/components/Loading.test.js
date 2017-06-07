@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Loading from '../../../components/Loading/Loading';
+import Loading from '../../../components/Loading';
 
 describe('Smoke TestingLoadingApp', () => {
   it('renders Loading component without crashing', () => {

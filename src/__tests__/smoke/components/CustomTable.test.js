@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CustomTable from '../../../components/CustomTable/CustomTable';
+import CustomTable from '../../../components/CustomTable';
 
 describe('Smoke Testing CustomTable', () => {
   it('renders CustomTable without crashing', () => {

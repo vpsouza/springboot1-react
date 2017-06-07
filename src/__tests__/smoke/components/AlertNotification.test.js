@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AlertNotification from '../../../components/AlertNotification/AlertNotification';
+import AlertNotification from '../../../components/AlertNotification';
 
 describe('Smoke Testing AlertNotification', () => {
   it('renders AlertNotification without crashing', () => {
